@@ -19,40 +19,41 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-const MongoClient = require("mongodb").MongoClient;
-const assert = require("assert");
-
 //// db connectivity ;;;;;;;;;;;;;;;;l
 
-const url = "mongodb://localhost:27017/";
-const dbname = "importext";
+const mongoose = require("mongoose");
 
-MongoClient.connect(url, (err, client) => {
-  assert.equal(err, null);
+const Dishes = require("./models/dishes");
 
+const url = "mongodb://localhost:27017/importext";
+const connect = mongoose.connect(url);
+
+connect.then((db) => {
   console.log("Connected correctly to server");
 
-  const db = client.db(dbname);
-  const collection = db.collection("users");
-  collection.insertOne(
-    { name: "xxx", pass: "test" },
+  var newDish = Dishes({
+    name: "Uthappizza",
+    description: "test",
+  });
 
-    (err, result) => {
-      assert.equal(err, null);
+  newDish
+    .save()
+    .then((dish) => {
+      console.log(dish);
 
-      console.log("After Insert:\n");
-      console.log(result.ops);
+      return Dishes.find({});
+    })
+    .then((dishes) => {
+      console.log(dishes);
 
-      collection.find({}).toArray((err, docs) => {
-        assert.equal(err, null);
-
-        console.log("Found:\n");
-        console.log(docs);
-
-        client.close();
-      });
-    }
-  );
+      return Dishes.remove({});
+    })
+    .then(() => {
+      return mongoose.connection.close();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 /////////-------------------------------db connect end
 app.use("/", indexRouter);
