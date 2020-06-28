@@ -35,7 +35,7 @@ MongoClient.connect(url, (err, client) => {
   const db = client.db(dbname);
   const collection = db.collection("users");
   collection.insertOne(
-    { name: "Uthappizza", pass: "test" },
+    { name: "xxx", pass: "test" },
 
     (err, result) => {
       assert.equal(err, null);
