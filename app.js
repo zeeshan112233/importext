@@ -6,6 +6,7 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var dashboardRouter = require("./routes/streamings");
 
 var app = express();
 
@@ -37,6 +38,7 @@ connect.then(
 
 ///////-------------------------------db connect end
 app.use("/", indexRouter);
+app.use("/dashboard", dashboardRouter);
 
 app.use("/users", usersRouter);
 
