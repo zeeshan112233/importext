@@ -4,6 +4,10 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+var passport = require("passport");
+
+var authenticate = require("./authenticate");
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var dashboardRouter = require("./routes/streamings");
@@ -20,11 +24,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+var config = require("./config");
+
 //// db connectivity ;;;;;;;;;;;;;;;;l
 
 const mongoose = require("mongoose");
 
-const url = "mongodb://localhost:27017/importext";
+app.use(passport.initialize());
+
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 connect.then(

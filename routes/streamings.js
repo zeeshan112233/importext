@@ -8,6 +8,8 @@ const streamingRouter = express.Router();
 
 streamingRouter.use(bodyParser.json());
 
+var authenticate = require("../authenticate");
+
 streamingRouter
   .route("/")
 
@@ -28,7 +30,7 @@ streamingRouter
 
   // add a streaming by name and password
 
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, (req, res, next) => {
     Streamings.create(req.body)
       .then(
         (streaming) => {
