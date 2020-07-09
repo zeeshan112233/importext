@@ -10,9 +10,37 @@ const userRouter = express.Router();
 
 userRouter.use(bodyParser.json());
 
-userRouter.post("/signup", (req, res, next) => {
+///////////////////////////////////////////////// file reading code starts
+const DIR = "./public/";
+
+var path = require("path");
+var fs = require("fs");
+var multer = require("multer");
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, DIR);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+var upload = multer({ storage: storage });
+
+userRouter.post("/signup", upload.single("profilephoto"), (req, res, next) => {
+  const url = req.protocol + "://" + req.get("host");
+
+  console.log(url);
+  // var profilephoto = fs.readFileSync(req.file.path);
+  // console.log(profilephoto);
   Users.register(
-    new Users({ username: req.body.username }),
+    new Users({
+      username: req.body.username,
+      //  profilephoto: profilephoto
+      // profilephoto: req.file.path,
+      profilephoto: url + "/public/" + req.file.filename,
+    }),
     req.body.password,
     (err, user) => {
       if (err) {
