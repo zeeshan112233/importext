@@ -10,35 +10,33 @@ const userRouter = express.Router();
 
 userRouter.use(bodyParser.json());
 
-///////////////////////////////////////////////// file reading code starts
-const DIR = "./public/";
+///////////////////////////////////////////////// file uploading code starts ////////////////////////////////
 
-var path = require("path");
-var fs = require("fs");
 var multer = require("multer");
+const DIR = "./public";
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, DIR);
   },
+
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
 
-var upload = multer({ storage: storage });
+var upload = multer({
+  storage: storage,
+});
+
+/// signup method using file upload method ...
 
 userRouter.post("/signup", upload.single("profilephoto"), (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
 
-  console.log(url);
-  // var profilephoto = fs.readFileSync(req.file.path);
-  // console.log(profilephoto);
   Users.register(
     new Users({
       username: req.body.username,
-      //  profilephoto: profilephoto
-      // profilephoto: req.file.path,
       profilephoto: url + "/public/" + req.file.filename,
     }),
     req.body.password,
@@ -70,6 +68,7 @@ userRouter.post("/login", passport.authenticate("local"), (req, res) => {
     status: "You are successfully logged in!",
   });
 });
+
 userRouter
   .route("/")
 
@@ -86,26 +85,6 @@ userRouter
         (err) => next(err)
       )
       .catch((err) => next(err));
-  })
-
-  // add a user by name and password
-
-  .post((req, res, next) => {
-    Users.create(req.body)
-      .then(
-        (user) => {
-          console.log("Dish Created ", user);
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(user);
-        },
-        (err) => next(err)
-      )
-      .catch((err) => next(err));
-  })
-  .put((req, res, next) => {
-    res.statusCode = 403;
-    res.end("PUT operation not supported on /users");
   })
 
   // delete all users
