@@ -32,12 +32,11 @@ var upload = multer({
 /// signup method using file upload method ...
 
 userRouter.post("/signup", upload.single("profilephoto"), (req, res, next) => {
-  const url = req.protocol + "://" + req.get("host");
-
+ 
   Users.register(
     new Users({
       username: req.body.username,
-      profilephoto: url + "/public/" + req.file.filename,
+      profilephoto: "http://localhost:3000/" + req.file.filename,
     }),
     req.body.password,
     (err, user) => {
@@ -66,6 +65,7 @@ userRouter.post("/login", passport.authenticate("local"), (req, res) => {
     success: true,
     token: token,
     status: "You are successfully logged in!",
+    User: req.user,
   });
 });
 
