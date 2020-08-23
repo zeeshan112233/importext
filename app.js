@@ -3,15 +3,12 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
 var passport = require("passport");
-
 var authenticate = require("./authenticate");
-
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var dashboardRouter = require("./routes/streamings");
-
+var neww = require('./routes/new')
 var app = express();
 
 // view engine setup

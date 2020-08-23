@@ -8,10 +8,19 @@ const streamingSchema = new Schema(
       required: true,
       unique: true,
     },
+
+    authour: { type: String, required: true },
+
     description: {
       type: String,
       required: true,
     },
+
+    photo: {
+      type: String,
+    },
+
+    Type: { type: String, required: true },
   },
   {
     timestamps: true,

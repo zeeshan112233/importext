@@ -5,11 +5,10 @@ var passport = require("passport");
 var authenticate = require("../authenticate");
 
 const Users = require("../models/users");
-
 const userRouter = express.Router();
-
 userRouter.use(bodyParser.json());
 
+var nodemailer = require("nodemailer");
 ///////////////////////////////////////////////// file uploading code starts ////////////////////////////////
 
 var multer = require("multer");
@@ -29,14 +28,51 @@ var upload = multer({
   storage: storage,
 });
 
+// mailer code ... code for email sending .......................
+
+var transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "creativeandinnovative1010@gmail.com",
+    pass: "redrighthand",
+  },
+});
+
+// genenrate a random code of 4 digits  so that we can send it to email ...
+
+userRouter.post("/getcode", (req, res) => {
+  var randomnumber = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+  var mailOptions = {
+    from: "creativeandinnovative1010@gmail.com",
+    to: req.body.username,
+    subject: "Verifiction Code",
+    html:
+      "<h3>Your verification code is:</h3><h1><b>" + randomnumber + "</b></h1>",
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.json({
+    success: true,
+    status: "Successful !!",
+    code: randomnumber,
+  });
+});
+
 /// signup method using file upload method ...
 
 userRouter.post("/signup", upload.single("profilephoto"), (req, res, next) => {
- 
   Users.register(
     new Users({
       username: req.body.username,
       profilephoto: "http://localhost:3000/" + req.file.filename,
+      recoveryemail: req.body.recoveryemail,
     }),
     req.body.password,
     (err, user) => {
@@ -55,7 +91,7 @@ userRouter.post("/signup", upload.single("profilephoto"), (req, res, next) => {
   );
 });
 
-// thsi login method will authenticate the username and password using local strategy of passport and create a new jwt token
+// this login method will authenticate the username and password using local strategy of passport and create a new jwt token
 
 userRouter.post("/login", passport.authenticate("local"), (req, res) => {
   var token = authenticate.getToken({ _id: req.user._id });

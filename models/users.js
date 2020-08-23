@@ -4,11 +4,12 @@ const Schema = mongoose.Schema;
 var passportLocalMongoose = require("passport-local-mongoose");
 
 var User = new Schema({
-   profilephoto: {
-
-    type : String, 
+  profilephoto: {
+    type: String,
   },
-
+  recoveryemail: {
+    type: String,
+  },
 });
 
 User.plugin(passportLocalMongoose);

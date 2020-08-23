@@ -30,19 +30,32 @@ streamingRouter
 
   // add a streaming by name and password
 
-  .post(authenticate.verifyUser, (req, res, next) => {
-    Streamings.create(req.body)
-      .then(
-        (streaming) => {
-          console.log("Dish Created ", streaming);
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(streaming);
-        },
-        (err) => next(err)
-      )
-      .catch((err) => next(err));
-  })
+  // .get(authenticate.verifyUser,(req,res,next)=>{
+  //     console.log(authenticate.verifyUser);
+  // })
+
+  .post(
+    authenticate.verifyUser,
+    (req, res, next) => {
+      Streamings.create({
+        name: req.body.name,
+        authour: req.body.authour,
+        description: req.body.description,
+        photo: req.body.photo,
+        Type: req.body.Type,
+      })
+        .then(
+          (streaming) => {
+            console.log("New streaming added  ", streaming);
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(streaming);
+          },
+          (err) => next(err)
+        )
+        .catch((err) => next(err));
+    }
+  )
   .put((req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /streamings");
