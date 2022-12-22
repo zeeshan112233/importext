@@ -16,7 +16,7 @@
     "http-errors": "~1.6.3",
     "install": "^0.13.0",
     "jade": "~1.11.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^3.5.9",
     "mongoose": "^5.9.22",
     "mongoose-currency": "^0.2.0",
